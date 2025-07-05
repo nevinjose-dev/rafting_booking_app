@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Book Your Rafting Slot</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 30px auto;
+      padding: 20px;
+      border: 2px solid #ddd;
+      border-radius: 10px;
+      background-color: #f9f9f9;
+    }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 15px;
+    }
+
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      font-size: 16px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      background-color: #007bff;
+      color: white;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+
+    #seat-info {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h2>🛶 Rafting Booking Form</h2>
+
+  <form method="POST" action="/book">
+    <label for="name">Name:</label>
+    <input type="text" name="name" required>
+
+    <label for="phone">Phone:</label>
+    <input type="text" name="phone" required>
+
+    <label for="place">Place:</label>
+    <input type="text" name="place" required>
+
+    <label for="date">Select Date:</label>
+    <input type="date" name="date" id="date" required min="" />
+
+    <label for="slot">Select Slot:</label>
+    <select name="slot" id="slot" required>
+      <option value="">-- Select Slot --</option>
+      <option value="7:00 AM">7:00 AM</option>
+      <option value="10:00 AM">10:00 AM</option>
+      <option value="1:00 PM">1:00 PM</option>
+      <option value="3:30 PM">3:30 PM</option>
+    </select>
+
+    <p id="seat-info"></p>
+
+    <label for="people">Number of People:</label>
+    <input type="number" name="people" min="5" max="30" required>
+
+    <button type="submit">Book Now</button>
+  </form>
+
+  <script>
+  const dateInput = document.getElementById("date");
+  const slotSelect = document.getElementById("slot");
+  const seatInfo = document.getElementById("seat-info");
+
+  // ✅ Set min date to tomorrow
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const minDate = tomorrow.toISOString().split("T")[0];
+  dateInput.min = minDate;
+
+  dateInput.addEventListener("change", fetchSeats);
+  slotSelect.addEventListener("change", fetchSeats);
+
+  function fetchSeats() {
+    const date = dateInput.value;
+    const slot = slotSelect.value;
+
+    if (date && slot) {
+      fetch("/remaining-seats", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ date: date, slot: slot })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.remaining > 0) {
+          seatInfo.textContent = `✅ ${data.remaining} seat(s) available for this slot`;
+
+          seatInfo.style.color = "green";
+        } else {
+          seatInfo.textContent = `❌ This slot is fully booked!`;
+          seatInfo.style.color = "red";
+        }
+      })
+      .catch(error => {
+        seatInfo.textContent = "⚠️ Unable to fetch availability";
+        seatInfo.style.color = "orange";
+      });
+    }
+  }
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,354 @@
+/* Reset & Base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background: #ffffff;
+  color: #003B73;
+  line-height: 1.6;
+  margin: 20px;
+}
+
+/* Navigation */
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  background: linear-gradient(120deg, #003b73, #2b8be6);
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nav-links {
+  display: flex;
+  width: 100%;
+  justify-content: right;
+}
+
+.nav-links a {
+  color: #fff;
+  font-weight: 500;
+  text-align: center;
+  text-decoration: none;
+  padding: 0 20px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-links a:hover {
+  color: #bababa;
+}
+
+/* Hero Section */
+.hero {
+  position: relative;
+  height: 90vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.hero-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 1;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  color: white;
+  padding: 0 1.5rem;
+}
+
+.hero h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+}
+
+.hero p {
+  font-size: 1.1rem;
+  margin-bottom: 1.2rem;
+  font-weight: 300;
+}
+
+/* Buttons */
+.button-wrapper {
+  display: flex;
+  justify-content: center;
+}
+
+.button {
+  background: linear-gradient(120deg, #003b73, #1668b5);
+  color: white;
+  padding: 0.8rem 1.5rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  text-decoration: none;
+}
+
+.button:hover {
+  background: linear-gradient(120deg, #00509d, #168aad);
+}
+
+/* Slot Timing Table */
+.timing-section {
+  padding: 60px 20px;
+  background-color: #f4faff;
+  text-align: center;
+}
+
+.timing-section h2 {
+  font-size: 2rem;
+  margin-bottom: 25px;
+  color: #003B73;
+}
+
+.slot-table-wrapper {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.slot-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #ffffff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+}
+
+.slot-table th,
+.slot-table td {
+  padding: 14px 18px;
+  text-align: center;
+  border-bottom: 1px solid #eee;
+  font-size: 1rem;
+}
+
+.slot-table thead {
+  background-color: #003B73;
+  color: white;
+}
+
+.slot-table tbody tr:nth-child(even) {
+  background-color: #f0faff;
+}
+
+.timing-note {
+  margin-top: 20px;
+  font-size: 1rem;
+  background-color: #fff7e6;
+  padding: 12px 20px;
+  border-left: 5px solid #ffa500;
+  border-radius: 8px;
+  color: #333;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Safety Section */
+.safety-section {
+  padding: 60px 20px;
+  background-color: #f9fcff;
+  text-align: center;
+}
+
+.safety-section h2 {
+  font-size: 2rem;
+  color: #003B73;
+  margin-bottom: 10px;
+}
+
+.safety-intro {
+  font-size: 1.1rem;
+  color: #333;
+  margin-bottom: 30px;
+  max-width: 700px;
+  margin: auto;
+}
+
+.safety-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 25px;
+  max-width: 1000px;
+  margin: auto;
+}
+
+.safety-card {
+  background: #ffffff;
+  border: 1px solid #008080;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease;
+}
+
+.safety-card:hover {
+  transform: translateY(-5px);
+}
+
+.safety-card i {
+  font-size: 2rem;
+  color: #008080;
+  margin-bottom: 10px;
+}
+
+/* FAQ */
+.faq-section {
+  background: #f4f9fc;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.faq-section h2 {
+  font-size: 2.2rem;
+  color: #003B73;
+  margin-bottom: 40px;
+}
+
+.faq-container {
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: left;
+  display: grid;
+  gap: 25px;
+}
+
+.faq-item {
+  background: #fff;
+  border-left: 5px solid #0077b6;
+  padding: 20px 25px;
+  border-radius: 8px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+  transition: transform 0.3s ease;
+}
+
+.faq-item:hover {
+  transform: translateY(-4px);
+}
+
+.faq-item h3 {
+  margin-bottom: 10px;
+  color: #003B73;
+  font-size: 1.1rem;
+}
+
+.faq-item p {
+  margin: 0;
+  color: #333;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+/* Footer */
+footer {
+  background: linear-gradient(120deg, #003b73, #2b8be6);
+  color: white;
+  text-align: center;
+  padding: 1.5rem 2rem;
+}
+
+/* WhatsApp Button */
+.whatsapp-button {
+  position: fixed;
+  bottom: 60px;
+  right: 20px;
+  background: linear-gradient(120deg, #19953a, #15b13f);
+  color: white;
+  padding: 10px 15px;
+  border-radius: 30px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  font-size: 14px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 999;
+  transition: transform 0.3s;
+}
+
+.whatsapp-button:hover {
+  transform: scale(1.05);
+  color: white;
+}
+
+.whatsapp-button img {
+  width: 20px;
+  height: 20px;
+  filter: invert(1);
+}
+
+/* Booking Form Styles */
+form {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 400px;
+  margin: auto;
+}
+
+label {
+  display: block;
+  margin-bottom: 10px;
+}
+
+input,
+select {
+  width: 100%;
+  padding: 5px;
+  margin-bottom: 15px;
+}
+
+button[type="submit"] {
+  padding: 10px 15px;
+  background-color: #0077cc;
+  color: white;
+  border: none;
+  border-radius: 5px;
+}
+
+/* Responsive (Mobile) */
+@media (max-width: 600px) {
+  .safety-card,
+  .faq-item {
+    padding: 15px;
+  }
+
+  .hero h1 {
+    font-size: 1.8rem;
+  }
+
+  .hero p {
+    font-size: 1rem;
+  }
+}

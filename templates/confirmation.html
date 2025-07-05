@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Booking Confirmation</title>
+  <style>
+    #payBtn {
+      background-color: red;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    #successMsg {
+      display: none;
+      margin-top: 20px;
+      border: 2px solid green;
+      padding: 15px;
+      background-color: #eaffea;
+      color: #0a7200;
+    }
+  </style>
+</head>
+<body>
+  <h2>Almost Done! 🛶</h2>
+  <p><strong>Booking ID:</strong> {{ booking_id }}</p>
+  <p><strong>Name:</strong> {{ name }}</p>
+  <p><strong>Phone:</strong> {{ phone }}</p>
+  <p><strong>Date:</strong> {{ date }}</p>
+  <p><strong>Slot Time:</strong> {{ slot }}</p>
+  <p><strong>Total Amount:</strong> ₹{{ total }}</p>
+  <p><strong>Advance to Pay:</strong> ₹{{ advance }}</p>
+
+  <button id="payBtn" onclick="simulatePayment()">Pay Now</button>
+
+  <div id="successMsg">
+    <h3>✅ Payment Successful</h3>
+    <p>Your booking has been confirmed.</p>
+    <p><strong>Remaining Amount:</strong> ₹{{ remaining }}</p>
+    
+    <h4>🛶 Raft Allocation:</h4>
+    <ul>
+      {% for raft in raft_assignments %}
+        <li>Raft {{ raft[1] }} → {{ raft[0] }} person(s)</li>
+      {% endfor %}
+    </ul>
+
+    <p><strong>📸 Please take a screenshot of this confirmation page.</strong></p>
+    <p>Show it at the rafting site as proof of your booking.</p>
+    <p>We’ll verify your <strong>name</strong>, <strong>phone number</strong>, <strong>date</strong> and <strong>slot time</strong> at the entrance.</p>
+  </div>
+
+  <script>
+    function simulatePayment() {
+      document.getElementById("payBtn").style.display = "none";
+      document.getElementById("successMsg").style.display = "block";
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin Panel</title>
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: center;
+    }
+    th {
+      background-color: #f4f4f4;
+    }
+    .cancel-btn {
+      background-color: red;
+      color: white;
+      padding: 5px 10px;
+      border: none;
+      cursor: pointer;
+    }
+    .remove-btn {
+      background-color: gray;
+      color: white;
+      padding: 5px 10px;
+      border: none;
+      cursor: pointer;
+    }
+    .cancelled {
+      color: gray;
+      text-decoration: line-through;
+    }
+    .slot-heading {
+      background-color: #ffc;
+      text-align: left;
+      padding: 10px;
+      margin-top: 30px;
+      font-weight: bold;
+    }
+    .free { color: red; }
+    .booked { color: green; }
+  </style>
+</head>
+<body>
+  <h2>📋 Admin Panel — All Bookings</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Phone</th>
+        <th>Place</th>
+        <th>Date</th>
+        <th>Slot</th>
+        <th>People</th>
+        <th>Raft</th>
+        <th>Advance</th>
+        <th>Total</th>
+        <th>Status</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for booking in bookings %}
+      <tr class="{{ 'cancelled' if booking[10] == 'cancelled' }}">
+        <td>{{ booking[0] }}</td>
+        <td>{{ booking[1] }}</td>
+        <td>{{ booking[2] }}</td>
+        <td>{{ booking[3] }}</td>
+        <td>{{ booking[4] }}</td>
+        <td>{{ booking[5] }}</td>
+        <td>{{ booking[6] }}</td>
+        <td>{{ booking[7] }}</td>
+        <td>₹{{ booking[8] }}</td>
+        <td>₹{{ booking[9] }}</td>
+        <td>{{ booking[10] }}</td>
+        <td>
+          {% if booking[10] != 'cancelled' %}
+            <a href="{{ url_for('cancel', booking_id=booking[0]) }}">
+              <button class="cancel-btn">Cancel</button>
+            </a>
+          {% else %}
+            <form action="{{ url_for('delete_booking', booking_id=booking[0]) }}" method="POST" style="display:inline;">
+              <button type="submit" class="remove-btn">🗑️ Remove</button>
+            </form>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <h2>🗶 Raft Summary by Slot</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Time Slot</th>
+        <th>Raft 1</th>
+        <th>Raft 2</th>
+        <th>Raft 3</th>
+        <th>Raft 4</th>
+        <th>Raft 5</th>
+        <th>Total</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for (date, slot), values in summary_table.items() %}
+      <tr>
+        <td>{{ date }}</td>
+        <td>{{ slot }}</td>
+        {% for i in range(1, 6) %}
+          {% if values[i] > 0 %}
+            <td class="booked">Booked({{ values[i] }})</td>
+          {% else %}
+            <td class="free">Free</td>
+          {% endif %}
+        {% endfor %}
+        <td>{{ values['total'] }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+</body>
+</html>
