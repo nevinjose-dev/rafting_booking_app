@@ -54,6 +54,12 @@
 </head>
 <body>
   <h2>📋 Admin Panel — All Bookings</h2>
+  <a href="{{ url_for('export_bookings') }}">
+  <button style="background-color:green; color:white; padding:8px 16px; border:none; cursor:pointer;">
+    ⬇️ Download CSV
+  </button>
+</a>
+
 
   <table>
     <thead>

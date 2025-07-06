@@ -126,17 +126,16 @@ def book():
     conn.close()
 
     return render_template("confirmation.html",
-    booking_id=booking_id,
-    name=name,
-    phone=phone,
-    date=date,
-    slot=slot,
-    total=total,
-    advance=advance,
-    remaining=total - advance,
-    raft_assignments=assignments
-)
-
+        booking_id=booking_id,
+        name=name,
+        phone=phone,
+        date=date,
+        slot=slot,
+        total=total,
+        advance=advance,
+        remaining=total - advance,
+        raft_assignments=assignments
+    )
 
 @app.route('/admin')
 def admin():
@@ -162,9 +161,6 @@ def admin():
             summary_table[key]['total'] = 0
         summary_table[key][r] = p
         summary_table[key]['total'] += p
-        for i in range(1, 6):
-            if i not in summary_table[key]:
-                summary_table[key][i] = 0
 
     conn.close()
     return render_template('admin.html', bookings=bookings, summary_table=summary_table)
@@ -182,11 +178,12 @@ def cancel(booking_id):
 def delete_booking(booking_id):
     conn = sqlite3.connect('database/booking.db')
     c = conn.cursor()
-    c.execute("DELETE FROM bookings WHERE id=? AND status='cancelled'", (booking_id,))
     c.execute("DELETE FROM raft_assignments WHERE booking_id=?", (booking_id,))
+    c.execute("DELETE FROM bookings WHERE id=? AND status='cancelled'", (booking_id,))
     conn.commit()
     conn.close()
     return redirect(url_for('admin'))
+
 @app.route('/edit/<int:booking_id>', methods=['GET', 'POST'])
 def edit_booking(booking_id):
     conn = sqlite3.connect('database/booking.db')
@@ -197,18 +194,20 @@ def edit_booking(booking_id):
         raft_no = request.form['raft']
         total = int(request.form['remaining'])
 
-        # Update the booking entry
         c.execute("UPDATE bookings SET people=?, raft_no=?, total=?, status='edited' WHERE id=?",
                   (people, raft_no, total, booking_id))
+
+        c.execute("DELETE FROM raft_assignments WHERE booking_id=?", (booking_id,))
+        c.execute("INSERT INTO raft_assignments (booking_id, raft_no, people) VALUES (?, ?, ?)",
+                  (booking_id, raft_no, people))
+
         conn.commit()
         conn.close()
         return redirect(url_for('admin'))
 
-    # Fetch the booking to edit
     booking = c.execute("SELECT * FROM bookings WHERE id=?", (booking_id,)).fetchone()
     conn.close()
     return render_template('edit.html', booking=booking)
-
 
 @app.route('/remaining-seats', methods=['POST'])
 def remaining_seats():
@@ -240,6 +239,30 @@ def remaining_seats():
             remaining += (6 - count)
 
     return jsonify({'remaining': remaining})
+import csv
+from flask import make_response
+
+@app.route('/export-bookings')
+def export_bookings():
+    conn = sqlite3.connect('database/booking.db')
+    c = conn.cursor()
+    c.execute("SELECT * FROM bookings")
+    bookings = c.fetchall()
+    conn.close()
+
+    output = []
+    header = ['ID', 'Name', 'Phone', 'Place', 'Date', 'Slot', 'People', 'Raft No', 'Advance', 'Total', 'Status']
+    output.append(header)
+
+    for row in bookings:
+        output.append([str(item) for item in row])
+
+    si = '\n'.join([','.join(line) for line in output])
+    response = make_response(si)
+    response.headers["Content-Disposition"] = "attachment; filename=bookings.csv"
+    response.headers["Content-type"] = "text/csv"
+    return response
+
 
 if __name__ == '__main__':
     init_db()
