@@ -1,54 +1,48 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Booking Confirmation</title>
-  <style>
-    #payBtn {
-      background-color: red;
-      color: white;
-      padding: 10px 20px;
-      border: none;
-      font-size: 16px;
-      cursor: pointer;
-    }
 
-    #successMsg {
-      display: none;
-      margin-top: 20px;
-      border: 2px solid green;
-      padding: 15px;
-      background-color: #eaffea;
-      color: #0a7200;
-    }
-  </style>
+  <!-- CSS File -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+  <!-- PDF Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
-  <h2>Almost Done! 🛶</h2>
-  <p><strong>Booking ID:</strong> {{ booking_id }}</p>
-  <p><strong>Name:</strong> {{ name }}</p>
-  <p><strong>Phone:</strong> {{ phone }}</p>
-  <p><strong>Date:</strong> {{ date }}</p>
-  <p><strong>Slot Time:</strong> {{ slot }}</p>
-  <p><strong>Total Amount:</strong> ₹{{ total }}</p>
-  <p><strong>Advance to Pay:</strong> ₹{{ advance }}</p>
 
-  <button id="payBtn" onclick="simulatePayment()">Pay Now</button>
+  <div class="confirmation-box" id="confirmationContent">
+    <h2>Almost Done! 🛶</h2>
+    <p><strong>Booking ID:</strong> {{ booking_id }}</p>
+    <p><strong>Name:</strong> {{ name }}</p>
+    <p><strong>Phone:</strong> {{ phone }}</p>
+    <p><strong>Date:</strong> {{ date }}</p>
+    <p><strong>Slot Time:</strong> {{ slot }}</p>
+    <p><strong>Total Amount:</strong> ₹{{ total }}</p>
+    <p><strong>Advance to Pay:</strong> ₹{{ advance }}</p>
 
-  <div id="successMsg">
-    <h3>✅ Payment Successful</h3>
-    <p>Your booking has been confirmed.</p>
-    <p><strong>Remaining Amount:</strong> ₹{{ remaining }}</p>
-    
-    <h4>🛶 Raft Allocation:</h4>
-    <ul>
-      {% for raft in raft_assignments %}
-        <li>Raft {{ raft[1] }} → {{ raft[0] }} person(s)</li>
-      {% endfor %}
-    </ul>
+    <button id="payBtn" onclick="simulatePayment()">Pay Now</button>
 
-    <p><strong>📸 Please take a screenshot of this confirmation page.</strong></p>
-    <p>Show it at the rafting site as proof of your booking.</p>
-    <p>We’ll verify your <strong>name</strong>, <strong>phone number</strong>, <strong>date</strong> and <strong>slot time</strong> at the entrance.</p>
+    <div id="successMsg">
+      <h3>✅ Payment Successful</h3>
+      <p>Your booking has been confirmed.</p>
+      <p><strong>Remaining Amount:</strong> ₹{{ remaining }}</p>
+
+      <h4>🛶 Raft Allocation:</h4>
+      <ul>
+        {% for raft in raft_assignments %}
+          <li>Raft {{ raft[1] }} → {{ raft[0] }} person(s)</li>
+        {% endfor %}
+      </ul>
+
+      <p><strong>📸 Please take a screenshot of this confirmation page.</strong></p>
+      <p>Show it at the rafting site as proof of your booking.</p>
+      <p>We’ll verify your <strong>name</strong>, <strong>phone number</strong>, <strong>date</strong> and <strong>slot time</strong> at the entrance.</p>
+
+      <button id="downloadBtn">Download Confirmation PDF</button>
+    </div>
   </div>
 
   <script>
@@ -56,6 +50,26 @@
       document.getElementById("payBtn").style.display = "none";
       document.getElementById("successMsg").style.display = "block";
     }
+
+    document.getElementById("downloadBtn").addEventListener("click", function () {
+      const element = document.getElementById("confirmationContent");
+      const opt = {
+        margin: 0.5,
+        filename: 'Rafting-Booking-{{ booking_id }}.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: {
+          scale: 2,
+          useCORS: true,
+          scrollX: 0,
+          scrollY: 0,
+          windowWidth: document.documentElement.scrollWidth,
+          windowHeight: document.documentElement.scrollHeight
+        },
+        jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+      };
+      html2pdf().set(opt).from(element).save();
+    });
   </script>
+
 </body>
 </html>
