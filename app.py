@@ -1,6 +1,6 @@
-from flask import Flask, render_template, request, redirect, url_for, jsonify
+from flask import Flask, render_template, request, redirect, url_for, jsonify, make_response
 from datetime import datetime, date as dt_date
-import sqlite3, os
+import sqlite3, os, csv
 
 app = Flask(__name__)
 
@@ -33,7 +33,7 @@ def init_db():
     c.execute('''CREATE TABLE IF NOT EXISTS bookings (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT, phone TEXT, place TEXT, date TEXT, slot TEXT,
-        people INTEGER, raft_no INTEGER, advance INTEGER, total INTEGER, status TEXT
+        people INTEGER, raft_no INTEGER, advance INTEGER, total INTEGER, status TEXT, booking_time TEXT
     )''')
     c.execute('''CREATE TABLE IF NOT EXISTS locked_slots (
         id INTEGER PRIMARY KEY AUTOINCREMENT, date TEXT, slot TEXT, reason TEXT
@@ -113,10 +113,11 @@ def book():
     total = people * rate
     advance = (people * 1400) // 2 if is_weekend else 1000 if people <= 6 else 2000 if people <= 12 else 3000
 
+    booking_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     c.execute("""INSERT INTO bookings 
-                 (name, phone, place, date, slot, people, raft_no, advance, total, status) 
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
-              (name, phone, place, date, slot, people, assignments[0][1], advance, total, 'confirmed'))
+                 (name, phone, place, date, slot, people, raft_no, advance, total, status, booking_time) 
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+              (name, phone, place, date, slot, people, assignments[0][1], advance, total, 'confirmed', booking_time))
     booking_id = c.lastrowid
 
     for p, r in assignments:
@@ -239,8 +240,6 @@ def remaining_seats():
             remaining += (6 - count)
 
     return jsonify({'remaining': remaining})
-import csv
-from flask import make_response
 
 @app.route('/export-bookings')
 def export_bookings():
@@ -251,7 +250,7 @@ def export_bookings():
     conn.close()
 
     output = []
-    header = ['ID', 'Name', 'Phone', 'Place', 'Date', 'Slot', 'People', 'Raft No', 'Advance', 'Total', 'Status']
+    header = ['ID', 'Name', 'Phone', 'Place', 'Date', 'Slot', 'People', 'Raft No', 'Advance', 'Total', 'Status', 'Booking Time']
     output.append(header)
 
     for row in bookings:
@@ -262,7 +261,6 @@ def export_bookings():
     response.headers["Content-Disposition"] = "attachment; filename=bookings.csv"
     response.headers["Content-type"] = "text/csv"
     return response
-
 
 if __name__ == '__main__':
     init_db()
