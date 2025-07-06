@@ -3,10 +3,17 @@
 <head>
   <title>Admin Panel</title>
   <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background-color: #f9f9f9;
+      color: #003B73;
+    }
     table {
       width: 100%;
       border-collapse: collapse;
       margin-top: 20px;
+      background: white;
     }
     th, td {
       border: 1px solid #ccc;
@@ -14,7 +21,7 @@
       text-align: center;
     }
     th {
-      background-color: #f4f4f4;
+      background-color: #e9f4ff;
     }
     .cancel-btn {
       background-color: red;
@@ -62,6 +69,7 @@
         <th>Advance</th>
         <th>Total</th>
         <th>Status</th>
+        <th>Booked At</th>
         <th>Action</th>
       </tr>
     </thead>
@@ -79,24 +87,28 @@
         <td>₹{{ booking[8] }}</td>
         <td>₹{{ booking[9] }}</td>
         <td>{{ booking[10] }}</td>
+        <td>{{ booking[11] }}</td>
         <td>
-          {% if booking[10] != 'cancelled' %}
-            <a href="{{ url_for('cancel', booking_id=booking[0]) }}">
-              <button class="cancel-btn">Cancel</button>
-            </a>
-          {% else %}
-            <form action="{{ url_for('delete_booking', booking_id=booking[0]) }}" method="POST" style="display:inline;">
-              <button type="submit" class="remove-btn">🗑️ Remove</button>
-            </form>
-          {% endif %}
-        </td>
+  {% if booking[10] != 'cancelled' %}
+    <a href="{{ url_for('cancel', booking_id=booking[0]) }}">
+      <button class="cancel-btn">Cancel</button>
+    </a>
+    <a href="{{ url_for('edit_booking', booking_id=booking[0]) }}">
+      <button class="remove-btn" style="background-color:#007bff;">Edit</button>
+    </a>
+  {% else %}
+    <form action="{{ url_for('delete_booking', booking_id=booking[0]) }}" method="POST" style="display:inline;">
+      <button type="submit" class="remove-btn">🗑️ Remove</button>
+    </form>
+  {% endif %}
+</td>
+
       </tr>
       {% endfor %}
     </tbody>
   </table>
 
-  <h2>🗶 Raft Summary by Slot</h2>
-
+  <h2>🔶 Raft Summary by Slot</h2>
   <table>
     <thead>
       <tr>
@@ -127,6 +139,5 @@
       {% endfor %}
     </tbody>
   </table>
-
 </body>
 </html>

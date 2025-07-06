@@ -187,6 +187,28 @@ def delete_booking(booking_id):
     conn.commit()
     conn.close()
     return redirect(url_for('admin'))
+@app.route('/edit/<int:booking_id>', methods=['GET', 'POST'])
+def edit_booking(booking_id):
+    conn = sqlite3.connect('database/booking.db')
+    c = conn.cursor()
+
+    if request.method == 'POST':
+        people = int(request.form['people'])
+        raft_no = request.form['raft']
+        total = int(request.form['remaining'])
+
+        # Update the booking entry
+        c.execute("UPDATE bookings SET people=?, raft_no=?, total=?, status='edited' WHERE id=?",
+                  (people, raft_no, total, booking_id))
+        conn.commit()
+        conn.close()
+        return redirect(url_for('admin'))
+
+    # Fetch the booking to edit
+    booking = c.execute("SELECT * FROM bookings WHERE id=?", (booking_id,)).fetchone()
+    conn.close()
+    return render_template('edit.html', booking=booking)
+
 
 @app.route('/remaining-seats', methods=['POST'])
 def remaining_seats():
