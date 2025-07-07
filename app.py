@@ -30,17 +30,27 @@ def init_db():
     os.makedirs("database", exist_ok=True)
     conn = sqlite3.connect('database/booking.db')
     c = conn.cursor()
+
     c.execute('''CREATE TABLE IF NOT EXISTS bookings (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT, phone TEXT, place TEXT, date TEXT, slot TEXT,
-        people INTEGER, raft_no INTEGER, advance INTEGER, total INTEGER, status TEXT, booking_time TEXT
+        people INTEGER, raft_no INTEGER, advance INTEGER, total INTEGER, status TEXT
     )''')
+
+    # Check and add missing 'booking_time' column
+    c.execute("PRAGMA table_info(bookings)")
+    columns = [col[1] for col in c.fetchall()]
+    if 'booking_time' not in columns:
+        c.execute("ALTER TABLE bookings ADD COLUMN booking_time TEXT")
+
     c.execute('''CREATE TABLE IF NOT EXISTS locked_slots (
         id INTEGER PRIMARY KEY AUTOINCREMENT, date TEXT, slot TEXT, reason TEXT
     )''')
+
     c.execute('''CREATE TABLE IF NOT EXISTS raft_assignments (
         id INTEGER PRIMARY KEY AUTOINCREMENT, booking_id INTEGER, raft_no INTEGER, people INTEGER
     )''')
+
     conn.commit()
     conn.close()
 
@@ -107,7 +117,6 @@ def book():
             conn.close()
             return f"❌ Cannot allocate {group_size} members due to raft limits. Try another slot."
 
-    # Pricing
     is_weekend = datetime.strptime(date, '%Y-%m-%d').weekday() in [5, 6]
     rate = 1400 if is_weekend else 1300
     total = people * rate
@@ -210,8 +219,6 @@ def edit_booking(booking_id):
     conn.close()
     return render_template('edit.html', booking=booking)
 
-
-
 @app.route('/remaining-seats', methods=['POST'])
 def remaining_seats():
     data = request.get_json()
@@ -264,9 +271,6 @@ def export_bookings():
     response.headers["Content-type"] = "text/csv"
     return response
 
-import sys
-
 if __name__ == '__main__':
     init_db()
-    app.run(debug=True)  # ✅ this shows full error details in browser
-
+    app.run(debug=True)
