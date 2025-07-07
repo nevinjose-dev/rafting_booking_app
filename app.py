@@ -267,9 +267,6 @@ def export_bookings():
 import sys
 
 if __name__ == '__main__':
-    if 'init-only' in sys.argv:
-        init_db()
-        print("✅ Database initialized and exited.")
-    else:
-        init_db()
-        app.run(debug=True)
+    init_db()
+    app.run(debug=True)  # ✅ this shows full error details in browser
+
