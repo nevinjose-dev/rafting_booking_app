@@ -209,14 +209,7 @@ def edit_booking(booking_id):
     booking = c.execute("SELECT * FROM bookings WHERE id=?", (booking_id,)).fetchone()
     conn.close()
     return render_template('edit.html', booking=booking)
-@app.route('/reset-db')
-def reset_db():
-    try:
-        os.remove('database/booking.db')
-        init_db()
-        return "✅ Database reset successful."
-    except Exception as e:
-        return f"❌ Error: {e}"
+
 
 
 @app.route('/remaining-seats', methods=['POST'])
